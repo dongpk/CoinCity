@@ -203,7 +203,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 380998364126217084}
-  - component: {fileID: 756501455136720133}
   - component: {fileID: 2516995938620421437}
   m_Layer: 0
   m_Name: GoldenSparanta
@@ -230,28 +229,6 @@ Transform:
   - {fileID: 2475735688361580473}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &756501455136720133
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1862796725366965715}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 203e19c444bd0d246b0da549e5ccfee0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CharacterLocomotion
-  animator: {fileID: 0}
-  characterController: {fileID: 2516995938620421437}
-  walkSpeed: 3
-  characterVisual: {fileID: 0}
-  lookToMovementDirection: 1
-  moveJoystick: {fileID: 0}
-  movementThreshold: 0.1
-  canStrafe: 0
-  forwardAnimationVar: Forward
-  strafeAnimationVar: Strafe
 --- !u!143 &2516995938620421437
 CharacterController:
   m_ObjectHideFlags: 0
