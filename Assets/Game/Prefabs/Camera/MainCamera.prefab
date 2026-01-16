@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 330148909204704516}
+  - component: {fileID: 8129169789164523029}
   - component: {fileID: 7152322360013487648}
   - component: {fileID: 1188261382700989256}
   - component: {fileID: 7079349046651673322}
@@ -28,13 +29,32 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8093931054130968810}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.35658664, y: 0, z: 0, w: 0.9342623}
+  m_LocalRotation: {x: 0.35658303, y: 0, z: 0, w: 0.9342637}
   m_LocalPosition: {x: 0, y: 11.369363, z: -11.185379}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 106.465, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 41.781, y: 0, z: 0}
+--- !u!114 &8129169789164523029
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8093931054130968810}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0252c9218b783554c9e5c50e7e5c8c69, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CameraObstacleFade
+  player: {fileID: 0}
+  obstacleLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  fadedValue: 1
+  originalValue: 2
+  fadeSpeed: 5
 --- !u!20 &7152322360013487648
 Camera:
   m_ObjectHideFlags: 0
@@ -68,7 +88,7 @@ Camera:
     height: 1
   near clip plane: 0.2
   far clip plane: 500
-  field of view: 35.6
+  field of view: 50
   orthographic: 0
   orthographic size: 10
   m_Depth: -1
