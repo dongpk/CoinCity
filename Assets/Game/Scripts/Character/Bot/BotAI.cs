@@ -65,37 +65,35 @@ public class BotAI : MonoBehaviour
 
     private void EvaluateSituation()
     {
-        if (character.HealthPercent <= botConfig.feelHealthThreshHold)
+        Character nearestEnemy= FindNearestEnemy();
+        if (nearestEnemy != null)
         {
-            Character nearestThreat = FindNearestEnemy();
-            if (nearestThreat != null && nearestThreat.CurrentHealth > character.CurrentHealth)
-            {
-                targetEnemy = nearestThreat;
-                ChangeState(BotState.Flee);
-                return;
-            }
-        }
-
-        Character weakerEnemy = FindWeaker();
-        if (weakerEnemy != null)
-        {
-            float distance = Vector3.Distance(transform.position, weakerEnemy.transform.position);
-            targetEnemy = weakerEnemy;
-
+            float distance = Vector3.Distance(transform.position, nearestEnemy.transform.position);
+            targetEnemy = nearestEnemy;
+            
             if (distance <= botConfig.attackRange)
             {
                 ChangeState(BotState.AttackEnemy);
-            }else if (distance <= botConfig.dectecionRange && Random.value < botConfig.aggressiveness)
+                return;
+            }
+            
+            bool isLowHealth = character.HealthPercent <= botConfig.feelHealthThreshHold;
+            bool isEnemyStronger = nearestEnemy.CurrentHealth > character.CurrentHealth;
+            if (isLowHealth && isEnemyStronger)
+            {
+                ChangeState(BotState.Flee);
+                return;
+            }
+
+            bool isEnemyWeaker = nearestEnemy.CurrentHealth < character.CurrentHealth;
+            bool inDetectionRange = distance <= botConfig.dectecionRange;
+            if(isEnemyWeaker && inDetectionRange && Random.value < botConfig.aggressiveness)
             {
                 ChangeState(BotState.ChaseEnemy);
-            }else
-            {
-                FindAndCollectionCoin();
+                return;
             }
-            return;
 
-            
-        }
+        }      
 
         FindAndCollectionCoin();
     }
@@ -126,7 +124,7 @@ public class BotAI : MonoBehaviour
         switch (currentState)
         {
             case BotState.Idle:
-                if (stateTimer > 2f)
+                if (stateTimer > .5f)
                 {
                     MoveToRandomPosition();
                     stateTimer = 0f;
@@ -174,11 +172,20 @@ public class BotAI : MonoBehaviour
 
 
             case BotState.Flee:
-                if (targetEnemy != null)
+                if (targetEnemy != null&& targetEnemy.IsAlive)
+                {
+                    float distance = Vector3.Distance(transform.position, targetEnemy.transform.position);
+                    if (distance > botConfig.attackRange)
+                    {
+                        TryAttack();
+                    }
+                }
+                else
                 {
                     Vector3 fleeDirection = (transform.position - targetEnemy.transform.position).normalized;
                     Vector3 fleePostion = transform.position + fleeDirection * botConfig.patrolRadius;
                     agent.SetDestination(fleePostion);
+
                 }
 
                 if (stateTimer > 3f)
