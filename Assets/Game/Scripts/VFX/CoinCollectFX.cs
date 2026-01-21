@@ -15,9 +15,6 @@ public class CoinCollectFX : MonoBehaviour
     {
         if(other.CompareTag("Coin"))
         {                  
-            VFXManager.Instance.PlayCoinVFX(this.gameObject.transform.position);
-
-
             controller.coinCollected.Invoke();
         }
     }
