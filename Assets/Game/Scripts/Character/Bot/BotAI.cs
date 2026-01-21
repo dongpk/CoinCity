@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.AI;
 
 public enum BotState
@@ -13,6 +13,7 @@ public enum BotState
 public class BotAI : MonoBehaviour
 {
     [SerializeField] BotConfig botConfig;
+
 
     NavMeshAgent agent;
     Character character;
@@ -31,9 +32,12 @@ public class BotAI : MonoBehaviour
         character = GetComponent<Character>();
         coinCollector = GetComponent<CoinCollector>();
         skinSelector = GetComponent<SkinSelector>();
-        skinSelector.SetRandomSkin();
+
+
+
         if (botConfig != null)
         {
+            //Debug.Log($"{name}: apply config skinIndex = {botConfig.skinIndex}");
             ApplyConfig();
         }
     }
@@ -41,6 +45,7 @@ public class BotAI : MonoBehaviour
     {
         agent.speed = botConfig.moveSpeed;
         skinSelector?.SetSkin(botConfig.skinIndex);
+        //Debug.Log($"current skinIndex = {skinSelector?.GetCurrentSkinIndex()}");
     }
     public void SetConfig(BotConfig newConfig)
     {
@@ -65,35 +70,42 @@ public class BotAI : MonoBehaviour
 
     private void EvaluateSituation()
     {
-        Character nearestEnemy= FindNearestEnemy();
+        Character nearestEnemy = FindNearestEnemy();
         if (nearestEnemy != null)
         {
             float distance = Vector3.Distance(transform.position, nearestEnemy.transform.position);
             targetEnemy = nearestEnemy;
-            
-            if (distance <= botConfig.attackRange)
-            {
-                ChangeState(BotState.AttackEnemy);
-                return;
-            }
-            
-            bool isLowHealth = character.HealthPercent <= botConfig.feelHealthThreshHold;
+
+            bool isLowHealth = character.CurrentHealth <= (botConfig.feelHealthThreshHold * 100);
             bool isEnemyStronger = nearestEnemy.CurrentHealth > character.CurrentHealth;
+
             if (isLowHealth && isEnemyStronger)
             {
                 ChangeState(BotState.Flee);
                 return;
             }
 
-            bool isEnemyWeaker = nearestEnemy.CurrentHealth < character.CurrentHealth;
-            bool inDetectionRange = distance <= botConfig.dectecionRange;
-            if(isEnemyWeaker && inDetectionRange && Random.value < botConfig.aggressiveness)
+            if (distance <= botConfig.attackRange && !isLowHealth)
             {
-                ChangeState(BotState.ChaseEnemy);
+                ChangeState(BotState.AttackEnemy);
                 return;
             }
 
-        }      
+
+
+            bool isEnemyWeaker = nearestEnemy.CurrentHealth <= character.CurrentHealth;
+            bool inDetectionRange = distance <= botConfig.dectecionRange;
+            if (isEnemyWeaker && inDetectionRange && Random.value < botConfig.aggressiveness)
+            {
+                ChangeState(BotState.ChaseEnemy);
+                if (distance <= botConfig.attackRange)
+                {
+                    ChangeState(BotState.AttackEnemy);
+                }
+                return;
+            }
+
+        }
 
         FindAndCollectionCoin();
     }
@@ -116,7 +128,7 @@ public class BotAI : MonoBehaviour
         {
             currentState = newState;
             stateTimer = 0f;
-            
+
         }
     }
     void ExecuteState()
@@ -124,14 +136,14 @@ public class BotAI : MonoBehaviour
         switch (currentState)
         {
             case BotState.Idle:
-                if (stateTimer > .5f)
+                if (stateTimer > .1f)
                 {
                     MoveToRandomPosition();
                     stateTimer = 0f;
                 }
                 break;
             case BotState.Collection:
-                if(currentTarget != null)
+                if (currentTarget != null)
                 {
                     agent.SetDestination(currentTarget.position);
                 }
@@ -172,21 +184,18 @@ public class BotAI : MonoBehaviour
 
 
             case BotState.Flee:
-                if (targetEnemy != null&& targetEnemy.IsAlive)
+                if (targetEnemy != null && targetEnemy.IsAlive)
                 {
                     float distance = Vector3.Distance(transform.position, targetEnemy.transform.position);
-                    if (distance > botConfig.attackRange)
+                    if (distance <= botConfig.attackRange)
                     {
                         TryAttack();
                     }
-                }
-                else
-                {
                     Vector3 fleeDirection = (transform.position - targetEnemy.transform.position).normalized;
                     Vector3 fleePostion = transform.position + fleeDirection * botConfig.patrolRadius;
                     agent.SetDestination(fleePostion);
-
                 }
+
 
                 if (stateTimer > 3f)
                 {
@@ -221,7 +230,7 @@ public class BotAI : MonoBehaviour
             }
 
             float distance = Vector3.Distance(transform.position, character.transform.position);
-            if(distance < minDistance)
+            if (distance < minDistance)
             {
                 minDistance = distance;
                 nearest = character;
@@ -242,7 +251,7 @@ public class BotAI : MonoBehaviour
                 continue;
             }
             float distance = Vector3.Distance(transform.position, character.transform.position);
-            if (distance <= botConfig.dectecionRange && enemy.CurrentHealth<minHealth)
+            if (distance <= botConfig.dectecionRange && enemy.CurrentHealth < minHealth)
             {
                 minHealth = enemy.CurrentHealth;
                 weaker = enemy;
@@ -257,7 +266,7 @@ public class BotAI : MonoBehaviour
         float minDistance = Mathf.Infinity;
         foreach (var coin in GameObject.FindGameObjectsWithTag("Coin"))
         {
-            if(!coin.activeInHierarchy)
+            if (!coin.activeInHierarchy)
             {
                 continue;
             }
@@ -276,7 +285,7 @@ public class BotAI : MonoBehaviour
     {
         Vector3 randomDirecton = Random.insideUnitSphere * botConfig.patrolRadius;
         randomDirecton += transform.position;
-        if(NavMesh.SamplePosition(randomDirecton,out NavMeshHit hit, botConfig.patrolRadius,
+        if (NavMesh.SamplePosition(randomDirecton, out NavMeshHit hit, botConfig.patrolRadius,
             NavMesh.AllAreas))
         {
             agent.SetDestination(hit.position);

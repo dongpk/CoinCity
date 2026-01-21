@@ -34,6 +34,7 @@ public class Bot : Character
         currentHealth = maxHealth;
         GetComponent<BotAI>().enabled = true;
         GetComponent<UnityEngine.AI.NavMeshAgent>().enabled = true;
+        Debug.Log($"{BotName} đã hồi sinh.");
 
         //TODO: làm game manager để respawn bot ở vị trí hợp lý 
     }
