@@ -19,6 +19,7 @@ public class BotAI : MonoBehaviour
     Character character;
     CoinCollector coinCollector;
     SkinSelector skinSelector;
+    Animator animator;
 
     BotState currentState = BotState.Idle;
     Transform currentTarget;
@@ -40,7 +41,10 @@ public class BotAI : MonoBehaviour
             //Debug.Log($"{name}: apply config skinIndex = {botConfig.skinIndex}");
             ApplyConfig();
         }
+        animator = GetComponentInChildren<Animator>();
     }
+
+  
     private void ApplyConfig()
     {
         agent.speed = botConfig.moveSpeed;
@@ -66,7 +70,19 @@ public class BotAI : MonoBehaviour
         EvaluateSituation();
 
         ExecuteState();
+        UpdateAnimator();
     }
+    void UpdateAnimator()
+    {
+        if (animator == null)
+        {
+            return;
+        }
+        float speed = agent.velocity.magnitude;
+       
+        animator.SetFloat("Speed", speed);
+    }
+   
 
     private void EvaluateSituation()
     {
