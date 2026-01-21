@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using StarterAssets;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -10,13 +11,16 @@ public class CoinRespawnRandom : MonoBehaviour
     [SerializeField] private float delay = 1f;
     [SerializeField] private int maxAttempts = 10;
 
-    private int currentRoadIndex = -1;
 
+    private int currentRoadIndex = -1;
+  
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Player")||other.CompareTag("Enemy"))
         {
+            
             StartCoroutine(CoinRespawnDelay());
+            
         }
     }
 
