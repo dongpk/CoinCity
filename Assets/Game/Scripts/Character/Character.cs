@@ -12,6 +12,7 @@ public abstract class Character : MonoBehaviour,IDamageable
     public float HealthPercent => (float)currentHealth / maxHealth;
 
     protected CoinCollector coinCollector;
+    protected Animator animator;
 
     public event Action<Character> OnDeath;
 
@@ -19,6 +20,7 @@ public abstract class Character : MonoBehaviour,IDamageable
     {
         currentHealth = maxHealth;
         coinCollector = GetComponent<CoinCollector>();
+        animator = GetComponentInChildren<Animator>();
     }
 
     public virtual void TakeDamage(int damageAmount)
@@ -30,6 +32,7 @@ public abstract class Character : MonoBehaviour,IDamageable
         if (currentHealth <= 0)
         {
             currentHealth = 0;
+            OnDeath?.Invoke(this);
             Die();
         }
     }
@@ -45,6 +48,7 @@ public abstract class Character : MonoBehaviour,IDamageable
     }
 
     protected abstract void Die();
+    protected abstract void Respawn();
     protected int GetCoins() => coinCollector?.CurrentCoins ?? 0;
 
 }
