@@ -5,11 +5,15 @@
 public class Bot : Character
 {
     BotAI aiBot;
-    BotConfig configBot;
+    [SerializeField] BotConfig configBot;
  
 
     public string BotName => configBot != null ? configBot.botName : "Bot";
 
+    private void Awake()
+    {
+        maxHealth = configBot != null ? configBot.maxHealth : 100;
+    }
     protected override void Start()
     {
         base.Start();
@@ -20,10 +24,11 @@ public class Bot : Character
         animator = GetComponentInChildren<Animator>();
 
     }
-    public void Initalize(BotConfig botConfig)
+   
+    public void Initialized(BotConfig botConfig)
     {
         configBot = botConfig;
-        maxHealth = configBot.maxHealth;
+        //maxHealth = configBot.maxHealth;
         currentHealth = maxHealth;
         gameObject.name = configBot.botName;
 
