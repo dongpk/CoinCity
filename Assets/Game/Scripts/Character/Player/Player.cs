@@ -53,21 +53,26 @@ public class Player : Character
 
     void TryAttack(Character target)
     {
-        if(Time.time-lastAtkTime < atkCooldown)
+        if (Time.time - lastAtkTime < atkCooldown)
         {
             return;
         }
 
         lastAtkTime = Time.time;
 
-        //quay về phía mục tiêu
-        LookAtTarget(target);
+        // Quay về phía mục tiêu
+        //LookAtTarget(target);
 
-        //animation
+        // Debug kiểm tra animator
+        VFXManager.Instance.PlayFireAtkVFXFollow(transform,new Vector3(0,0,0));
+
 
         target.TakeDamageFrom(this, attackDmg);
         Debug.Log($"Player attacked {target.name} for {attackDmg} damage!");
     }
+
+ 
+
     void LookAtTarget(Character target)
     {
         Vector3 direction = (target.transform.position - transform.position).normalized;
