@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class CoinVFXItem : MonoBehaviour
+public class VFXItem : MonoBehaviour
 {
 
 
