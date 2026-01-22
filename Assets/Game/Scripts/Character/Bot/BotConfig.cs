@@ -29,6 +29,8 @@ public class BotConfig : ScriptableObject
     public int attackDmg = 10;
     [Tooltip("thời gian mỗi lần đánh")]
     public float attackCooldown = 1f;
+    [Tooltip("hiệu ứng khi tấn công")]
+    public GameObject attackVFXPrefab;
     [Tooltip("bán kính di chuyển/tuần tra")]
     public float patrolRadius = 10f;
 }
