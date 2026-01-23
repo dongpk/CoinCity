@@ -86,7 +86,13 @@ public class BotAI : MonoBehaviour
 
     private void EvaluateSituation()
     {
+
         Character nearestEnemy = FindNearestEnemy();
+        if (character.CurrentHealth <= 50)
+        {
+            FindAndCollectionHealth();
+            return;
+        }
         if (nearestEnemy != null)
         {
             float distance = Vector3.Distance(transform.position, nearestEnemy.transform.position);
@@ -118,12 +124,27 @@ public class BotAI : MonoBehaviour
                 {
                     ChangeState(BotState.AttackEnemy);
                 }
+               
                 return;
             }
+            
 
         }
-
+        
         FindAndCollectionCoin();
+    }
+    void FindAndCollectionHealth()
+    {
+        GameObject nearstHealth = FindNearstHealth();
+        if (nearstHealth != null)
+        {
+            currentTarget = nearstHealth.transform;
+            ChangeState(BotState.Collection);
+        }
+        else
+        {
+            ChangeState(BotState.Idle);
+        }
     }
     void FindAndCollectionCoin()
     {
@@ -282,6 +303,26 @@ public class BotAI : MonoBehaviour
         GameObject nearest = null;
         float minDistance = Mathf.Infinity;
         foreach (var coin in GameObject.FindGameObjectsWithTag("Coin"))
+        {
+            if (!coin.activeInHierarchy)
+            {
+                continue;
+            }
+
+            float distance = Vector3.Distance(transform.position, coin.transform.position);
+            if (distance < minDistance)
+            {
+                minDistance = distance;
+                nearest = coin;
+            }
+        }
+        return nearest;
+    }
+    private GameObject FindNearstHealth()
+    {
+        GameObject nearest = null;
+        float minDistance = Mathf.Infinity;
+        foreach (var coin in GameObject.FindGameObjectsWithTag("Health"))
         {
             if (!coin.activeInHierarchy)
             {
