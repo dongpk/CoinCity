@@ -79,6 +79,9 @@ namespace StarterAssets
 
         //unity events
         public UnityEvent coinCollected;
+        public UnityEvent healthCollected;
+        public UnityEvent playerDamaged;
+        public UnityEvent playerDead;
 
         // cinemachine
         private float _cinemachineTargetYaw;
@@ -225,8 +228,8 @@ namespace StarterAssets
 
             // note: Vector2's == operator uses approximation so is not floating point error prone, and is cheaper than magnitude
             // if there is no input, set the target speed to 0
-            if (_input.move == Vector2.zero) targetSpeed = 0.0f;
-
+            //if (_input.move == Vector2.zero) targetSpeed = 0.0f;
+                
             // a reference to the players current horizontal velocity
             float currentHorizontalSpeed = new Vector3(_controller.velocity.x, 0.0f, _controller.velocity.z).magnitude;
 
@@ -251,7 +254,7 @@ namespace StarterAssets
             }
 
             _animationBlend = Mathf.Lerp(_animationBlend, targetSpeed, Time.deltaTime * SpeedChangeRate);
-            if (_animationBlend < 0.01f) _animationBlend = 0f;
+            if (_animationBlend < 0.1f) _animationBlend = 0f;
 
             // normalise input direction
             Vector3 inputDirection = new Vector3(_input.move.x, 0.0f, _input.move.y).normalized;
