@@ -1,13 +1,14 @@
 ﻿using System;
 using UnityEngine;
 
-public abstract class Character : MonoBehaviour,IDamageable
+public abstract class Character : MonoBehaviour, IDamageable
 {
     [SerializeField] protected int maxHealth;
     protected int currentHealth;
 
     public int MaxHealth => maxHealth;
     public int CurrentHealth => currentHealth;
+
     public bool IsAlive => currentHealth > 0;
     public float HealthPercent => (float)currentHealth / maxHealth;
 
@@ -39,12 +40,25 @@ public abstract class Character : MonoBehaviour,IDamageable
     public virtual void TakeDamageFrom(Character atker, int dmgAmount)
     {
         TakeDamage(dmgAmount);
-        if(!IsAlive && atker!= null)
+        if (!IsAlive && atker != null)
         {
             int coinStolen = coinCollector.TakeAllCoins();
             atker.GetComponent<CoinCollector>()?.AddCoin(coinStolen);
             Debug.Log($"{atker.name} lay duoc {coinStolen} xu tu {gameObject.name}");
         }
+    }
+    public virtual void Heal(int healAmount)
+    {
+        if (!IsAlive)
+        {
+            return;
+        }
+        currentHealth += healAmount;
+        if (currentHealth > maxHealth)
+        {
+            currentHealth = maxHealth;
+        }
+        Debug.Log($"{gameObject.name} được hồi {healAmount} máu. Hiện tại: {currentHealth}");
     }
 
     protected abstract void Die();
