@@ -9,13 +9,21 @@ public class Player : Character
     [SerializeField] float attackRange = 1f;
 
     Character currentTarget;
+    ThirdPersonController controller;
     float lastAtkTime = Mathf.NegativeInfinity;
 
 
     protected override void Start()
     {
+        controller = GetComponent<ThirdPersonController>();
         base.Start();
-        animator = GetComponent<Animator>();
+        Invoke(nameof(RefreshAnimator), 0.01f);
+    }
+    void RefreshAnimator()
+    {
+       
+        animator = GetComponentInChildren<Animator>();
+
     }
     private void Update()
     {
@@ -60,12 +68,11 @@ public class Player : Character
 
         lastAtkTime = Time.time;
 
-        // Quay về phía mục tiêu
-        //LookAtTarget(target);
+    
 
-        // Debug kiểm tra animator
+        
         VFXManager.Instance.PlayFireAtkVFXFollow(transform,new Vector3(0,0,0));
-
+        controller?.playerDamaged?.Invoke();
 
         target.TakeDamageFrom(this, attackDmg);
         Debug.Log($"Player attacked {target.name} for {attackDmg} damage!");
@@ -73,45 +80,23 @@ public class Player : Character
 
  
 
-    void LookAtTarget(Character target)
-    {
-        Vector3 direction = (target.transform.position - transform.position).normalized;
-        direction.y = 0;
-        if (direction!= Vector3.zero)
-        {
-            transform.rotation = Quaternion.LookRotation(direction);
-        }
-    }
+    
 
-    private void PerformAttack()
-    {
-        RaycastHit hit;
-        Vector3 origin = transform.position + Vector3.up;
-        Vector3 direction = transform.forward;
-        if (Physics.Raycast(origin, direction, out hit, attackRange))
-        {
-            Character target = hit.collider.GetComponent<Character>();
-            if (target == null)
-            {
-                target = hit.collider.GetComponentInParent<Character>();
-            }
-            if (target != null && target != this)
-            {
-                target.TakeDamageFrom(this, attackDmg);
-                Debug.Log($"Player attacked {hit.collider.name}");
-            }
-
-        }
-    }
-
+    // Kiểm tra animator có null không
     protected override void Die()
     {
         Debug.Log("Player has died.");
-        GetComponent<ThirdPersonController>().enabled = false;
+        
+        
+        controller?.playerDead?.Invoke();
+
         if (animator != null && animator.gameObject.activeInHierarchy)
         {
             animator.SetTrigger("Died");
+            //Debug.Log("Trigger Died set!");
         }
+        GetComponent<ThirdPersonController>().enabled = false;
+        
         Invoke(nameof(Respawn), respawnTime);
     }
 
