@@ -7,7 +7,8 @@ public enum VFXType
     Coin,
     FireAttack,
     IceAttack,
-    DefaultAttack
+    DefaultAttack,
+    Health
 }
 public class VFXManager : MonoBehaviour
 {
@@ -18,10 +19,11 @@ public class VFXManager : MonoBehaviour
     [SerializeField] GameObject fireAtkVfxPrefab;
     [SerializeField] GameObject iceAtkVfxPrefab;
     [SerializeField] GameObject defaultAtkVfxPrefab;
+    [SerializeField] GameObject healVfxPrefab;
 
     [Space]
     [Header("Pool Settings")]
-    [SerializeField] int poolSize = 10;
+    [SerializeField] int poolSize = 6;
 
     private Dictionary<VFXType,List<GameObject>> poolDict = new Dictionary<VFXType, List<GameObject>>();
     private Dictionary<VFXType, GameObject> prefabDict = new Dictionary<VFXType, GameObject>();
@@ -48,6 +50,7 @@ public class VFXManager : MonoBehaviour
         prefabDict[VFXType.FireAttack] = fireAtkVfxPrefab;
         prefabDict[VFXType.IceAttack] = iceAtkVfxPrefab;
         prefabDict[VFXType.DefaultAttack] = defaultAtkVfxPrefab;
+        prefabDict[VFXType.Health] = healVfxPrefab;
     }
 
     // Tạo và chuẩn bị pool các hiệu ứng VFX
@@ -140,6 +143,7 @@ public class VFXManager : MonoBehaviour
     }
     
     public void PlayCoinVFX(Vector3 pos) => PlayVFX(VFXType.Coin, pos);
+    public void PlayHealthVFX(Vector3 pos) => PlayVFX(VFXType.Health, pos);
     public void PlayFireAtkVFX(Vector3 pos) => PlayVFX(VFXType.FireAttack, pos);    
     public void PlayIceAtkVFX(Vector3 pos) => PlayVFX(VFXType.IceAttack, pos);
     public void PlayDefaultAtkVFX(Vector3 pos) => PlayVFX(VFXType.DefaultAttack, pos);
@@ -151,11 +155,9 @@ public class VFXManager : MonoBehaviour
     public void PlayDefaultAtkVFXFollow(Transform target,Vector3 offset = default) 
         => PlayVFXFollow(VFXType.DefaultAttack, target, offset);
 
-    /// <summary>
-    /// for bot
-    /// </summary>
-    /// <param name="prefab"></param>
-    /// <param name="pos"></param>
+    #region Custom VFX Methods for External Prefabs
+
+
     public void PlayVFX(GameObject prefab, Vector3 pos)
     {
         if (prefab == null) return;
@@ -195,5 +197,6 @@ public class VFXManager : MonoBehaviour
         ActivateVFX(vfxToPlay);
     }
 
+    #endregion
 
 }
