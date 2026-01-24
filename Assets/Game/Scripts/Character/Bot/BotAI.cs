@@ -88,13 +88,15 @@ public class BotAI : MonoBehaviour
     {
 
         Character nearestEnemy = FindNearestEnemy();
-        if (character.CurrentHealth <= 50)
+        if (character.CurrentHealth <= 50 && !nearestEnemy)
         {
             FindAndCollectionHealth();
-            return;
+           return;
         }
         if (nearestEnemy != null)
         {
+           
+
             float distance = Vector3.Distance(transform.position, nearestEnemy.transform.position);
             targetEnemy = nearestEnemy;
 
@@ -106,7 +108,10 @@ public class BotAI : MonoBehaviour
                 ChangeState(BotState.Flee);
                 return;
             }
-
+            if (distance <= botConfig.attackRange)
+            {
+                TryAttack();
+            }
             if (distance <= botConfig.attackRange && !isLowHealth)
             {
                 ChangeState(BotState.AttackEnemy);
