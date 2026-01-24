@@ -23,7 +23,7 @@ public class VFXManager : MonoBehaviour
 
     [Space]
     [Header("Pool Settings")]
-    [SerializeField] int poolSize = 6;
+    [SerializeField] int poolSize = 10;
 
     private Dictionary<VFXType,List<GameObject>> poolDict = new Dictionary<VFXType, List<GameObject>>();
     private Dictionary<VFXType, GameObject> prefabDict = new Dictionary<VFXType, GameObject>();
@@ -132,9 +132,16 @@ public class VFXManager : MonoBehaviour
     }
     GameObject GetVFXFromPool(VFXType type)
     {
-        foreach (var vfx in poolDict[type])
+        if (!poolDict.ContainsKey(type)) return CreateVFX(type);
+        
+        var pool = poolDict[type];
+        
+        // Xóa các object đã bị destroy
+        pool.RemoveAll(vfx => vfx == null);
+        
+        foreach (var vfx in pool)
         {
-            if (!vfx.activeInHierarchy)
+            if (vfx != null && !vfx.activeInHierarchy)
             {
                 return vfx;
             }
@@ -174,9 +181,13 @@ public class VFXManager : MonoBehaviour
     {
         if (customPrefabPool.TryGetValue(prefab, out var pool))
         {
+            // Xóa các VFX đã bị destroy khỏi pool
+            pool.RemoveAll(vfx => vfx == null);
+            
             foreach (var vfx in pool)
             {
-                if (!vfx.activeInHierarchy)
+                // Double check null (phòng trường hợp edge case)
+                if (vfx != null && !vfx.activeInHierarchy)
                 {
                     return vfx;
                 }
@@ -186,14 +197,23 @@ public class VFXManager : MonoBehaviour
     }
     public void PlayVFXFollow(GameObject prefab, Transform followTarget, Vector3 offset = default)
     {
-        if (prefab == null) return;
+        if (prefab == null || followTarget == null) return;
 
         GameObject vfxToPlay = GetCustomVFXFromPool(prefab);
         if (vfxToPlay == null) return;
 
-        vfxToPlay.transform.SetParent(followTarget);
-        vfxToPlay.transform.localPosition = offset;
-        //vfxToPlay.transform.localRotation = Quaternion.identity;
+        // Giữ VFX trong pool, dùng follower thay vì parent
+        vfxToPlay.transform.SetParent(transform); // Parent về VFXManager
+        
+        // Thêm/lấy follower component
+        var follower = vfxToPlay.GetComponent<VFXFollower>();
+        if (follower == null)
+        {
+            follower = vfxToPlay.AddComponent<VFXFollower>();
+        }
+        follower.SetTarget(followTarget, offset);
+        
+        vfxToPlay.transform.position = followTarget.position + offset;
         ActivateVFX(vfxToPlay);
     }
 
