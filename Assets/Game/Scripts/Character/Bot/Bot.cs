@@ -56,6 +56,7 @@ public class Bot : Character
     protected override void Respawn()
     {
         currentHealth = maxHealth;
+        healthBar.UpdateHealthBar(maxHealth, currentHealth);
         GetComponent<BotAI>().enabled = true;
         GetComponent<UnityEngine.AI.NavMeshAgent>().enabled = true;
         RefreshAnimator();
