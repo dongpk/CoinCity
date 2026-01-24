@@ -10,17 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f6a8f4e6a053e864ca97a29dd0466214, type: 3}
-  m_Name: bot2
+  m_Name: bot4
   m_EditorClassIdentifier: Assembly-CSharp::BotConfig
   botName: 
   maxHealth: 100
   moveSpeed: 5
-  aggressiveness: 1
+  aggressiveness: 0.5
   dectecionRange: 10
   attackRange: 1
   feelHealthThreshHold: 0.3
-  skinIndex: 1
+  skinIndex: 0
   attackDmg: 10
   attackCooldown: 1
-  attackVFXPrefab: {fileID: 2200876703280731110, guid: b693d7478fab3704da6fb3d17b22cd1b, type: 3}
+  attackVFXPrefab: {fileID: 0}
   patrolRadius: 10

@@ -13,14 +13,14 @@ MonoBehaviour:
   m_Name: Bot1
   m_EditorClassIdentifier: Assembly-CSharp::BotConfig
   botName: 
-  maxHealth: 500
-  moveSpeed: 0
+  maxHealth: 110
+  moveSpeed: 5
   aggressiveness: 0.5
   dectecionRange: 10
   attackRange: 1
   feelHealthThreshHold: 0.3
-  skinIndex: 1
-  attackDmg: 50
+  skinIndex: 0
+  attackDmg: 30
   attackCooldown: 1
   attackVFXPrefab: {fileID: 2200876703280731110, guid: b693d7478fab3704da6fb3d17b22cd1b, type: 3}
   patrolRadius: 10
