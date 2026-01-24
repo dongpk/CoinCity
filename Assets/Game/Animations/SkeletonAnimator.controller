@@ -35,7 +35,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: -5455075036266976943, guid: c9bdbfb8f26e6c440a800c528254d0c6, type: 3}
+  m_Motion: {fileID: -5455075036266976943, guid: 4dc9a004fc48e5940ae56e18389596ef, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -50,7 +50,7 @@ BlendTree:
   m_Name: Idle
   m_Childs:
   - serializedVersion: 2
-    m_Motion: {fileID: -5252816984213320552, guid: c9bdbfb8f26e6c440a800c528254d0c6, type: 3}
+    m_Motion: {fileID: -5252816984213320552, guid: 4dc9a004fc48e5940ae56e18389596ef, type: 3}
     m_Threshold: 0
     m_Position: {x: 0, y: 0}
     m_TimeScale: 1
@@ -58,7 +58,7 @@ BlendTree:
     m_DirectBlendParameter: Speed
     m_Mirror: 0
   - serializedVersion: 2
-    m_Motion: {fileID: 6861445081996442198, guid: c9bdbfb8f26e6c440a800c528254d0c6, type: 3}
+    m_Motion: {fileID: 6861445081996442198, guid: 4dc9a004fc48e5940ae56e18389596ef, type: 3}
     m_Threshold: 5
     m_Position: {x: 0, y: 0}
     m_TimeScale: 1
@@ -134,7 +134,7 @@ AnimatorController:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: PoliceAnimator
+  m_Name: SkeletonAnimator
   serializedVersion: 5
   m_AnimatorParameters:
   - m_Name: Grounded
@@ -194,7 +194,7 @@ AnimatorStateMachine:
     m_Position: {x: 250, y: 220, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -6315418948760518630}
-    m_Position: {x: 641.9713, y: 166.74931, z: 0}
+    m_Position: {x: 640, y: 170, z: 0}
   m_ChildStateMachines: []
   m_AnyStateTransitions:
   - {fileID: 2450526597305840678}
