@@ -103,6 +103,7 @@ public class Player : Character
     protected override void Respawn()
     {
         currentHealth = maxHealth;
+        healthBar.UpdateHealthBar(maxHealth, currentHealth);
         GetComponent<ThirdPersonController>().enabled = true;
         if (animator != null)
         {
