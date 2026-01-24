@@ -4,6 +4,7 @@ using UnityEngine;
 public abstract class Character : MonoBehaviour, IDamageable
 {
     [SerializeField] protected int maxHealth;
+    [SerializeField] protected HealthBar healthBar;
     protected int currentHealth;
 
     public int MaxHealth => maxHealth;
@@ -20,6 +21,7 @@ public abstract class Character : MonoBehaviour, IDamageable
     protected virtual void Start()
     {
         currentHealth = maxHealth;
+        healthBar?.UpdateHealthBar(maxHealth, currentHealth);
         coinCollector = GetComponent<CoinCollector>();
         animator = GetComponentInChildren<Animator>();
     }
@@ -30,6 +32,7 @@ public abstract class Character : MonoBehaviour, IDamageable
 
         currentHealth -= damageAmount;
         Debug.Log($"{gameObject.name} bị mất {damageAmount} máu. Còn lại: {currentHealth}");
+        healthBar?.UpdateHealthBar(maxHealth, currentHealth);
         if (currentHealth <= 0)
         {
             currentHealth = 0;
@@ -58,6 +61,7 @@ public abstract class Character : MonoBehaviour, IDamageable
         {
             currentHealth = maxHealth;
         }
+        healthBar?.UpdateHealthBar(maxHealth, currentHealth);
         Debug.Log($"{gameObject.name} được hồi {healAmount} máu. Hiện tại: {currentHealth}");
     }
 
