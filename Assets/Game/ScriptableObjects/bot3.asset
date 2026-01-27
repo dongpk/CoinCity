@@ -16,11 +16,11 @@ MonoBehaviour:
   maxHealth: 100
   moveSpeed: 6
   aggressiveness: 0.2
-  dectecionRange: 10
+  dectecionRange: 5
   attackRange: 1
   feelHealthThreshHold: 0.4
   skinIndex: 2
-  attackDmg: 10
+  attackDmg: 15
   attackCooldown: 1
   attackVFXPrefab: {fileID: 2200876703280731110, guid: b693d7478fab3704da6fb3d17b22cd1b, type: 3}
   patrolRadius: 10

@@ -16,7 +16,7 @@ MonoBehaviour:
   maxHealth: 110
   moveSpeed: 5
   aggressiveness: 0.5
-  dectecionRange: 10
+  dectecionRange: 5
   attackRange: 1
   feelHealthThreshHold: 0.3
   skinIndex: 0

@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BotConfig
   botName: 
   maxHealth: 100
-  moveSpeed: 5
+  moveSpeed: 5.5
   aggressiveness: 1
-  dectecionRange: 10
+  dectecionRange: 5
   attackRange: 1
   feelHealthThreshHold: 0.3
   skinIndex: 1
