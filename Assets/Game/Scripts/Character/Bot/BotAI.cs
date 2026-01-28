@@ -256,7 +256,7 @@ public class BotAI : MonoBehaviour
                 targetEnemy.TakeDamageFrom(character, botConfig.attackDmg);
                 VFXManager.Instance.PlayVFXFollow(botConfig.attackVFXPrefab,transform, new Vector3(0,.2f,0));
                 lastAttack = Time.time;
-                Debug.Log($"{name} tan cong {targetEnemy.name}");
+                //Debug.Log($"{name} tan cong {targetEnemy.name}");
 
             }
         }
