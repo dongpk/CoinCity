@@ -75,7 +75,7 @@ public class Player : Character
         controller?.playerDamaged?.Invoke();
 
         target.TakeDamageFrom(this, attackDmg);
-        Debug.Log($"Player attacked {target.name} for {attackDmg} damage!");
+        //Debug.Log($"Player attacked {target.name} for {attackDmg} damage!");
     }
 
  
@@ -85,7 +85,7 @@ public class Player : Character
     // Kiểm tra animator có null không
     protected override void Die()
     {
-        Debug.Log("Player has died.");
+        //Debug.Log("Player has died.");
         
         
         controller?.playerDead?.Invoke();
@@ -109,6 +109,6 @@ public class Player : Character
         {
             animator.Play("Idle Walk Run", 0, 0f);
         }
-        Debug.Log("Player has respawned.");
+        //Debug.Log("Player has respawned.");
     }
 }
