@@ -25,13 +25,17 @@ public abstract class Character : MonoBehaviour, IDamageable
         coinCollector = GetComponent<CoinCollector>();
         animator = GetComponentInChildren<Animator>();
     }
-
+    public virtual void ResetHealth()
+    {
+        currentHealth = maxHealth;
+        healthBar?.UpdateHealthBar(maxHealth, currentHealth);
+    }
     public virtual void TakeDamage(int damageAmount)
     {
         if (!IsAlive) { return; }
 
         currentHealth -= damageAmount;
-        Debug.Log($"{gameObject.name} bị mất {damageAmount} máu. Còn lại: {currentHealth}");
+        //Debug.Log($"{gameObject.name} bị mất {damageAmount} máu. Còn lại: {currentHealth}");
         healthBar?.UpdateHealthBar(maxHealth, currentHealth);
         if (currentHealth <= 0)
         {
@@ -47,7 +51,7 @@ public abstract class Character : MonoBehaviour, IDamageable
         {
             int coinStolen = coinCollector.TakeAllCoins();
             atker.GetComponent<CoinCollector>()?.AddCoin(coinStolen);
-            Debug.Log($"{atker.name} lay duoc {coinStolen} xu tu {gameObject.name}");
+            //Debug.Log($"{atker.name} lay duoc {coinStolen} xu tu {gameObject.name}");
         }
     }
     public virtual void Heal(int healAmount)
@@ -62,7 +66,7 @@ public abstract class Character : MonoBehaviour, IDamageable
             currentHealth = maxHealth;
         }
         healthBar?.UpdateHealthBar(maxHealth, currentHealth);
-        Debug.Log($"{gameObject.name} được hồi {healAmount} máu. Hiện tại: {currentHealth}");
+        //Debug.Log($"{gameObject.name} được hồi {healAmount} máu. Hiện tại: {currentHealth}");
     }
 
     protected abstract void Die();
