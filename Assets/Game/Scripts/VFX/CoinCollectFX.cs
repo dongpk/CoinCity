@@ -18,4 +18,5 @@ public class CoinCollectFX : MonoBehaviour
             controller.coinCollected.Invoke();
         }
     }
+   
 }
