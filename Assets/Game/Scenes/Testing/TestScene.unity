@@ -3105,7 +3105,7 @@ MonoBehaviour:
   m_OverrideTileSize: 0
   m_TileSize: 256
   m_OverrideVoxelSize: 0
-  m_VoxelSize: 0.023333333
+  m_VoxelSize: 0.043333333
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 23800000, guid: e5c028b372d20494e92b5e1504eeb279, type: 2}
   m_BuildHeightMesh: 0
@@ -14708,6 +14708,37 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2bdfcbdbf35abb14489f9872dee78326, type: 3}
+--- !u!1 &1465241723
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1465241724}
+  m_Layer: 0
+  m_Name: Game Manager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1465241724
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1465241723}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -6.79164, y: 0, z: -4.42029}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &1466518597 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6242151808105047337, guid: b6cb09fa7c98d54459f4aa3cf99353ad, type: 3}
@@ -23351,3 +23382,4 @@ SceneRoots:
   - {fileID: 519532232}
   - {fileID: 1720501010}
   - {fileID: 3809644173466090472}
+  - {fileID: 1465241724}
