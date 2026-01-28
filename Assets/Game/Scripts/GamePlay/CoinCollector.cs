@@ -16,6 +16,13 @@ public class CoinCollector : MonoBehaviour
         TryGetComponent(out controller);
         UpdateCoinUI();
     }
+
+    public void ResetCoins()
+    {
+        CurrentCoins = 0;
+        UpdateCoinUI();
+        OnCoinCollected?.Invoke(CurrentCoins);
+    }
     public void AddCoin(int amt)
     {
         CurrentCoins += amt;
@@ -44,7 +51,7 @@ public class CoinCollector : MonoBehaviour
             controller?.coinCollected?.Invoke();
             AddCoin(1);
             
-            Debug.Log($"{other.name} Collected! Total Coins: " + CurrentCoins);
+            //Debug.Log($"{other.name} Collected! Total Coins: " + CurrentCoins);
 
         }
     }
