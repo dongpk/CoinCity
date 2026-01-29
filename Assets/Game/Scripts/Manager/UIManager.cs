@@ -31,6 +31,7 @@ public class UIManager : MonoBehaviour
     [Space]
     [Header("GameEnd Panel")]
     [SerializeField] GameObject gameEndPanel;
+    [SerializeField] GameObject endTextBG;
     [SerializeField] TextMeshProUGUI endText;
     [SerializeField] Transform finalRankingContainer;
     [SerializeField] Button exitButton;
@@ -147,6 +148,7 @@ public class UIManager : MonoBehaviour
         menuPanel?.SetActive(false);
         countdownPanel?.SetActive(false);
         HUD?.SetActive(true);
+        endTextBG?.SetActive(false);
         gameEndPanel?.SetActive(true);
 
         //result
@@ -155,14 +157,14 @@ public class UIManager : MonoBehaviour
         {
             if (playerRank == 1)
             {
-                endText.text = "🏆 YOU WIN! 🏆";
+                endText.text = " YOU WIN! ";
                 endText.color = Color.yellow;
 
             }
             else
             {
                 endText.text = $"You finished at #{playerRank}";
-                endText.color = Color.white;
+                endText.color = Color.black;
             }
         }
         //showfinalranking
@@ -227,6 +229,9 @@ public class UIManager : MonoBehaviour
         if (timeRemaing <= 10)
         {
             timerText.color = Color.red;
+        }else
+        {
+            timerText.color = Color.white;
         }
 
     }
