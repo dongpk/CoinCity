@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f6a8f4e6a053e864ca97a29dd0466214, type: 3}
   m_Name: bot4
   m_EditorClassIdentifier: Assembly-CSharp::BotConfig
-  botName: 
+  botName: lazada
   maxHealth: 100
   moveSpeed: 5
   aggressiveness: 0.5
