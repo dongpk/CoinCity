@@ -46,7 +46,7 @@ public class SkinSelector : MonoBehaviour
 
     public void NextSkin()
     {
-        int nextSkinIndex = (currentSkinIndex + 1) % skins.Length;
+        int nextSkinIndex = (currentSkinIndex +1) % skins.Length;
         SetSkin(nextSkinIndex);
     }
 
