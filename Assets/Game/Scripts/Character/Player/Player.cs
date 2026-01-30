@@ -1,5 +1,6 @@
 ﻿using StarterAssets;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Player : Character
 {
@@ -11,7 +12,7 @@ public class Player : Character
     Character currentTarget;
     ThirdPersonController controller;
     float lastAtkTime = Mathf.NegativeInfinity;
-
+    public UnityEvent damaged;
 
     protected override void Start()
     {
@@ -58,6 +59,7 @@ public class Player : Character
         }
         return nearest;
     }
+    
 
     void TryAttack(Character target)
     {
@@ -77,10 +79,15 @@ public class Player : Character
         target.TakeDamageFrom(this, attackDmg);
         //Debug.Log($"Player attacked {target.name} for {attackDmg} damage!");
     }
+    public override void TakeDamageFrom(Character attacker, int damage)
+    {
+        base.TakeDamageFrom(attacker, damage);
+        damaged?.Invoke();
+    }
 
- 
 
-    
+
+
 
     // Kiểm tra animator có null không
     protected override void Die()
@@ -99,6 +106,7 @@ public class Player : Character
         
         Invoke(nameof(Respawn), respawnTime);
     }
+    
 
     protected override void Respawn()
     {
