@@ -75,17 +75,7 @@ public class UIManager : MonoBehaviour
             exitButton.onClick.AddListener(OnExitClick);
         }
 
-        if (prevSkin != null)
-        {
-            prevSkin.onClick.RemoveListener(SelectPreviousSkin);
-            prevSkin.onClick.AddListener(SelectPreviousSkin);
-        }
-
-        if (nextSkin != null)
-        {
-            nextSkin.onClick.RemoveListener(SelectNextSkin);
-            nextSkin.onClick.AddListener(SelectNextSkin);
-        }
+       
 
         UpdateSkinUI();
     }
@@ -188,7 +178,7 @@ public class UIManager : MonoBehaviour
         if (playerSkinSelector != null)
         {
             int current = playerSkinSelector.GetCurrentSkinIndex();
-            playerSkinSelector.SetSkin(current - 1);
+            playerSkinSelector.PrevSkin();
             //updateskinui
             UpdateSkinUI();
         }
@@ -198,7 +188,7 @@ public class UIManager : MonoBehaviour
         if (playerSkinSelector != null)
         {
             int current = playerSkinSelector.GetCurrentSkinIndex();
-            playerSkinSelector.SetSkin(current + 1);
+            playerSkinSelector.NextSkin();
             //updateskinui
             UpdateSkinUI();
         }
@@ -304,11 +294,7 @@ public class UIManager : MonoBehaviour
             playButton.onClick.RemoveListener(OnPlayClick);
         if (exitButton != null)
             exitButton.onClick.RemoveListener(OnExitClick);
-        if (prevSkin != null)
-            prevSkin.onClick.RemoveListener(SelectPreviousSkin);
-        if (nextSkin != null)
-            nextSkin.onClick.RemoveListener(SelectNextSkin);
-
+       
         if (GameManager.Instance != null)
         {
             GameManager.Instance.OnShowMenu.RemoveListener(ShowMenuPanel);
