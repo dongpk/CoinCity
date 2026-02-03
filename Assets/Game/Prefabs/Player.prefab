@@ -140,6 +140,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Player
   maxHealth: 100
   healthBar: {fileID: 7666547393320142274}
+  freeCoin: 1
   respawnTime: 3
   attackDmg: 20
   atkCooldown: 1
@@ -342,6 +343,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CoinCollector
   coinText: {fileID: 9193499446839685427}
+  healthBar: {fileID: 0}
 --- !u!114 &9195815367771789093
 MonoBehaviour:
   m_ObjectHideFlags: 0
