@@ -6,6 +6,7 @@ using UnityEngine;
 public class CoinCollector : MonoBehaviour
 {
     [SerializeField] TextMeshProUGUI coinText;
+    [SerializeField] HealthBar healthBar;
     public int CurrentCoins { get; private set; } = 0;
 
     public event Action<int> OnCoinCollected;
@@ -26,6 +27,10 @@ public class CoinCollector : MonoBehaviour
     public void AddCoin(int amt)
     {
         CurrentCoins += amt;
+        if (healthBar != null)
+        {
+            healthBar.ShowCoinGain(amt, Color.black);
+        }
         UpdateCoinUI();
         OnCoinCollected?.Invoke(CurrentCoins);
     }
