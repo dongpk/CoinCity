@@ -1,10 +1,12 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public abstract class Character : MonoBehaviour, IDamageable
 {
     [SerializeField] protected int maxHealth;
     [SerializeField] protected HealthBar healthBar;
+    [SerializeField] int freeCoin = 1;
     protected int currentHealth;
 
     public int MaxHealth => maxHealth;
@@ -49,7 +51,13 @@ public abstract class Character : MonoBehaviour, IDamageable
         TakeDamage(dmgAmount);
         if (!IsAlive && atker != null)
         {
-            int coinStolen = coinCollector.TakeAllCoins();
+            int coinStolen= coinCollector.TakeAllCoins();
+            coinStolen = (coinStolen == 0) ? freeCoin : coinStolen;
+
+            if (healthBar != null)
+            {
+                atker.healthBar.ShowCoinGain(coinStolen, Color.orange);
+            }
             atker.GetComponent<CoinCollector>()?.AddCoin(coinStolen);
             //Debug.Log($"{atker.name} lay duoc {coinStolen} xu tu {gameObject.name}");
         }
