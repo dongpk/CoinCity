@@ -1,4 +1,5 @@
 ﻿using System;
+
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -7,6 +8,7 @@ public abstract class Character : MonoBehaviour, IDamageable
     [SerializeField] protected int maxHealth;
     [SerializeField] protected HealthBar healthBar;
     [SerializeField] int freeCoin = 1;
+    
     protected int currentHealth;
 
     public int MaxHealth => maxHealth;
@@ -75,6 +77,12 @@ public abstract class Character : MonoBehaviour, IDamageable
         }
         healthBar?.UpdateHealthBar(maxHealth, currentHealth);
         //Debug.Log($"{gameObject.name} được hồi {healAmount} máu. Hiện tại: {currentHealth}");
+    }
+    protected abstract void IncreaseSize();
+    
+    public virtual void ResetSize()
+    {
+        transform.localScale = Vector3.one;
     }
 
     protected abstract void Die();
