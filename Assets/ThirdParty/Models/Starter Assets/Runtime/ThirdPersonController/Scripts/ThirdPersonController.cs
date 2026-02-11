@@ -218,6 +218,10 @@ namespace StarterAssets
             CinemachineCameraTarget.transform.rotation = Quaternion.Euler(_cinemachineTargetPitch + CameraAngleOverride,
                 _cinemachineTargetYaw, 0.0f);
         }
+        public void UpdateMoveSpeed(float newMoveSpeed)
+        {
+            MoveSpeed = newMoveSpeed;
+        }
 
         private void Move()
         {
