@@ -72,6 +72,13 @@ public class BotAI : MonoBehaviour
         ExecuteState();
         UpdateAnimator();
     }
+    public void SetSpeed(float newSpeed)
+    {
+        if (agent != null)
+        {
+            agent.speed = newSpeed;
+        }
+    }
     void UpdateAnimator()
     {
         if (animator == null)
