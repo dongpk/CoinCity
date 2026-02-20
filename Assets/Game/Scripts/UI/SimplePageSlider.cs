@@ -46,11 +46,11 @@ public class SimplePageSlider : MonoBehaviour
 
         if (playAnimation)
         {
-            // ✅ FIX: Thêm .SetUpdate(true) để DOTween chạy khi timeScale = 0
+            // s.SetUpdate(true) để DOTween chạy khi timeScale = 0
             scrollRect.DOHorizontalNormalizedPos(targetNormalizedPos, slideDuration)
                       .SetEase(slideEase)
                       .SetId(scrollRect)
-                      .SetUpdate(true); // ← QUAN TRỌNG: dùng unscaled time
+                      .SetUpdate(true);
         }
         else
         {
@@ -70,7 +70,7 @@ public class SimplePageSlider : MonoBehaviour
             {
                 btnImage.color = Color.white;
                 // ✅ FIX: Thêm .SetUpdate(true)
-                navButtons[i].transform.DOScale(1.4f, 0.2f).SetUpdate(true);
+                navButtons[i].transform.DOScale(1.3f, 0.2f).SetUpdate(true);
             }
             else
             {
