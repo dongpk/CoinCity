@@ -123,6 +123,7 @@ public class Player : Character
         GetComponent<ThirdPersonController>().enabled = true;
         currentSizeLevel = 0;
         cinemachineComposer.CameraDistance = defaultDistance;
+        controller?.UpdateMoveSpeed(baseSpeed);
         transform.localScale = Vector3.one;
         if (animator != null)
         {
