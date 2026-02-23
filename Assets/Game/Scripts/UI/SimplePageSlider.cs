@@ -46,7 +46,7 @@ public class SimplePageSlider : MonoBehaviour
 
         if (playAnimation)
         {
-            // s.SetUpdate(true) để DOTween chạy khi timeScale = 0
+            // s-.SetUpdate(true) để DOTween chạy khi timeScale = 0
             scrollRect.DOHorizontalNormalizedPos(targetNormalizedPos, slideDuration)
                       .SetEase(slideEase)
                       .SetId(scrollRect)
