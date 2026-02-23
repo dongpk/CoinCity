@@ -151,8 +151,8 @@ public class GameManager : MonoBehaviour
     public void OnExitButton()
     {
         ResetGame();
+        //LoadingScreen.Instance.StartFakeLoading();
         SceneManager.LoadScene("City1");
-
         //ShowMenu();
     }
     void ResetALLCoins()
