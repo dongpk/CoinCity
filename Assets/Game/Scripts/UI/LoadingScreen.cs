@@ -8,20 +8,20 @@ public class LoadingScreen : MonoBehaviour
     public static LoadingScreen Instance { get; private set; }
 
     [Header("UI References")]
-    [SerializeField] GameObject UiCanvas;       
-    [SerializeField] GameObject loadingCanvas;  
-    [SerializeField] Slider progressSlider;   
+    [SerializeField] GameObject UiCanvas;
+    [SerializeField] GameObject loadingCanvas;
+    [SerializeField] Slider progressSlider;
 
     [Header("Timing Settings")]
     [SerializeField] float minLoadTime = 3f;
     [SerializeField] float maxLoadTime = 5f;
 
     [Header("Phase Settings")]
-    [SerializeField] float fastPhaseEnd = 0.60f;
-    [SerializeField] float slowPhaseEnd = 0.90f;
+    [SerializeField] float fastPhaseEnd  = 0.60f;
+    [SerializeField] float slowPhaseEnd  = 0.90f;
 
     [Header("Stall Settings")]
-    [SerializeField] int stallCount = 2;
+    [SerializeField] int   stallCount   = 2;
     [SerializeField] float stallMinTime = 0.3f;
     [SerializeField] float stallMaxTime = 0.8f;
 
@@ -151,10 +151,8 @@ public class LoadingScreen : MonoBehaviour
         if (sceneOp != null)
         {
             sceneOp.allowSceneActivation = true;
-
             yield return new WaitUntil(() => sceneOp.isDone);
             yield return new WaitForSecondsRealtime(0.1f);
-
             if (loadingCanvas != null) loadingCanvas.SetActive(false);
         }
         else
@@ -178,8 +176,9 @@ public class LoadingScreen : MonoBehaviour
         while (elapsed < duration)
         {
             elapsed += Time.unscaledDeltaTime;
-            float t = Mathf.Clamp01(elapsed / duration);
-            _targetProgress = Mathf.Lerp(startVal, endVal, curve.Evaluate(t));
+            float t       = Mathf.Clamp01(elapsed / duration);
+            float curvedT = curve.Evaluate(t);
+            _targetProgress = Mathf.Lerp(startVal, endVal, curvedT);
 
             if (stallIndex < stallPoints.Length && t >= stallPoints[stallIndex])
             {
