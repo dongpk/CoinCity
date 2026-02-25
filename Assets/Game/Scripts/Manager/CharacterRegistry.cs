@@ -6,7 +6,7 @@ public class CharacterRegistry : MonoBehaviour
 {
     public static CharacterRegistry Instance { get; private set; }
 
-    // ✅ Dùng HashSet cho Register/Unregister O(1), List cho iteration
+   
     private readonly List<Character> _characters = new List<Character>(16);
     private readonly List<Transform> _coins      = new List<Transform>(64);
     private readonly List<Transform> _healths    = new List<Transform>(16);
