@@ -35,7 +35,7 @@ public class HealthBar : MonoBehaviour
     }
     public void ShowCoinGain(int amt, Color color)
     {
-        Debug.Log("show coin success");
+        //Debug.Log("show coin success");
         if (floatingCoinPrefab == null || coinText == null)
         {
             return;
