@@ -19,6 +19,9 @@ public class Player : Character
     private int currentSizeLevel = 0;
     private float baseSpeed=5f;
     private float defaultDistance = 17f;
+    private float _findTimer = 0f;
+    private const float FIND_INTERVAL = 0.15f;
+
     protected override void Start()
     {
         controller = GetComponent<ThirdPersonController>();
@@ -33,41 +36,39 @@ public class Player : Character
     }
     private void Update()
     {
-        if (!IsAlive)
-        {
-            return;
-        }
+        if (!IsAlive) return;
+
         IncreaseSize();
-        currentTarget = FindNearestEnemy();
-        if (currentTarget != null)
+
+        // ✅ Throttle: 6-7 lần/s thay vì 60
+        _findTimer += Time.deltaTime;
+        if (_findTimer >= FIND_INTERVAL)
         {
-            TryAttack(currentTarget);
+            _findTimer = 0f;
+            currentTarget = FindNearestEnemy();
         }
+
+        if (currentTarget != null) TryAttack(currentTarget);
     }
 
-
-
+    // ✅ Dùng Registry
     Character FindNearestEnemy()
     {
-        Character nearest = null;
-        float minDistance = attackRange;
+        var characters = CharacterRegistry.Instance?.Characters;
+        if (characters == null) return null;
 
-        foreach (var character in FindObjectsByType<Character>(FindObjectsSortMode.None))
+        Character nearest = null;
+        float minSqr      = attackRange * attackRange;
+
+        for (int i = 0; i < characters.Count; i++)
         {
-            if (character == this || !character.IsAlive)
-            {
-                continue;
-            }
-            float distance = Vector3.Distance(transform.position, character.transform.position);
-            if (distance < minDistance)
-            {
-                minDistance = distance;
-                nearest = character;
-            }
+            var c = characters[i];
+            if (c == this || !c.IsAlive) continue;
+            float sqr = (transform.position - c.transform.position).sqrMagnitude;
+            if (sqr < minSqr) { minSqr = sqr; nearest = c; }
         }
         return nearest;
     }
-
 
     void TryAttack(Character target)
     {

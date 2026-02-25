@@ -28,6 +28,7 @@ public abstract class Character : MonoBehaviour, IDamageable
         healthBar?.UpdateHealthBar(maxHealth, currentHealth);
         coinCollector = GetComponent<CoinCollector>();
         animator = GetComponentInChildren<Animator>();
+        CharacterRegistry.Register(this);  // ✅
     }
     public virtual void ResetHealth()
     {
@@ -89,4 +90,8 @@ public abstract class Character : MonoBehaviour, IDamageable
     protected abstract void Respawn();
     protected int GetCoins() => coinCollector?.CurrentCoins ?? 0;
 
+    protected virtual void OnDestroy()
+    {
+        CharacterRegistry.Unregister(this);  // ✅
+    }
 }

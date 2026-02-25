@@ -1,364 +1,241 @@
 ﻿using UnityEngine;
 using UnityEngine.AI;
 
-public enum BotState
-{
-    Idle,
-    Collection,
-    ChaseEnemy,
-    AttackEnemy,
-    Flee,
-}
+public enum BotState { Idle, Collection, ChaseEnemy, AttackEnemy, Flee }
+
 [RequireComponent(typeof(NavMeshAgent))]
 public class BotAI : MonoBehaviour
 {
     [SerializeField] BotConfig botConfig;
 
-
-    NavMeshAgent agent;
-    Character character;
+    NavMeshAgent  agent;
+    Character     character;
     CoinCollector coinCollector;
-    SkinSelector skinSelector;
-    Animator animator;
+    SkinSelector  skinSelector;
+    Animator      animator;
 
-    BotState currentState = BotState.Idle;
+    BotState  currentState = BotState.Idle;
     Transform currentTarget;
     Character targetEnemy;
-    float lastAttack;
-    float stateTimer;
+    float     lastAttack;
+    float     stateTimer;
+
+    // ✅ THROTTLE TIMERS - không chạy mỗi frame nữa
+    float _evalTimer;
+    float _navTimer;
+    const float EVAL_INTERVAL = 0.2f;   // AI suy nghĩ 5 lần/s
+    const float NAV_INTERVAL  = 0.25f;  // NavMesh update 4 lần/s
 
     private void Start()
     {
-        agent = GetComponent<NavMeshAgent>();
-        character = GetComponent<Character>();
+        agent         = GetComponent<NavMeshAgent>();
+        character     = GetComponent<Character>();
         coinCollector = GetComponent<CoinCollector>();
-        skinSelector = GetComponent<SkinSelector>();
+        skinSelector  = GetComponent<SkinSelector>();
 
-
-
-        if (botConfig != null)
-        {
-            //Debug.Log($"{name}: apply config skinIndex = {botConfig.skinIndex}");
-            ApplyConfig();
-        }
+        if (botConfig != null) ApplyConfig();
         animator = GetComponentInChildren<Animator>();
+
+        // ✅ Stagger: mỗi bot bắt đầu ở thời điểm khác nhau
+        _evalTimer = Random.Range(0f, EVAL_INTERVAL);
+        _navTimer  = Random.Range(0f, NAV_INTERVAL);
     }
 
-  
     private void ApplyConfig()
     {
         agent.speed = botConfig.moveSpeed;
         skinSelector?.SetSkin(botConfig.skinIndex);
-        //Debug.Log($"current skinIndex = {skinSelector?.GetCurrentSkinIndex()}");
     }
-    public void SetConfig(BotConfig newConfig)
-    {
-        botConfig = newConfig;
-        ApplyConfig();
-    }
+
+    public void SetConfig(BotConfig newConfig) { botConfig = newConfig; ApplyConfig(); }
+    public void SetSpeed(float s) { if (agent != null) agent.speed = s; }
 
     private void Update()
     {
-        if (!character.IsAlive)
-        {
-            return;
+        if (!character.IsAlive) return;
 
+        float dt = Time.deltaTime;
+        stateTimer  += dt;
+        _evalTimer  += dt;
+        _navTimer   += dt;
+
+        // ✅ AI evaluate: 5 lần/s thay vì 60 lần/s
+        if (_evalTimer >= EVAL_INTERVAL)
+        {
+            _evalTimer = 0f;
+            EvaluateSituation();
         }
 
-        stateTimer += Time.deltaTime;
+        // ✅ Navigation: 4 lần/s
+        if (_navTimer >= NAV_INTERVAL)
+        {
+            _navTimer = 0f;
+            ExecuteStateNav();
+        }
 
-        EvaluateSituation();
-
-        ExecuteState();
         UpdateAnimator();
     }
-    public void SetSpeed(float newSpeed)
-    {
-        if (agent != null)
-        {
-            agent.speed = newSpeed;
-        }
-    }
+
     void UpdateAnimator()
     {
-        if (animator == null)
-        {
-            return;
-        }
-        float speed = agent.velocity.magnitude;
-       
-        animator.SetFloat("Speed", speed);
+        if (animator != null)
+            animator.SetFloat("Speed", agent.velocity.magnitude);
     }
-   
 
     private void EvaluateSituation()
     {
-
         Character nearestEnemy = FindNearestEnemy();
-        if (character.CurrentHealth <= 50 && !nearestEnemy)
+
+        if (character.CurrentHealth <= 50 && nearestEnemy == null)
         {
             FindAndCollectionHealth();
-           return;
+            return;
         }
+
         if (nearestEnemy != null)
         {
-           
+            // ✅ Dùng sqrMagnitude thay Vector3.Distance (tránh sqrt)
+            float sqrDist = (transform.position - nearestEnemy.transform.position).sqrMagnitude;
+            targetEnemy   = nearestEnemy;
 
-            float distance = Vector3.Distance(transform.position, nearestEnemy.transform.position);
-            targetEnemy = nearestEnemy;
-
-            bool isLowHealth = character.CurrentHealth <= (botConfig.feelHealthThreshHold * 100);
+            bool isLowHealth    = character.CurrentHealth <= (botConfig.feelHealthThreshHold * 100);
             bool isEnemyStronger = nearestEnemy.CurrentHealth > character.CurrentHealth;
+            float atkRangeSqr   = botConfig.attackRange * botConfig.attackRange;
+            float detRangeSqr   = botConfig.dectecionRange * botConfig.dectecionRange;
 
-            if (isLowHealth && isEnemyStronger)
-            {
-                ChangeState(BotState.Flee);
-                return;
-            }
-            if (distance <= botConfig.attackRange)
+            if (isLowHealth && isEnemyStronger) { ChangeState(BotState.Flee); return; }
+
+            if (sqrDist <= atkRangeSqr)
             {
                 TryAttack();
+                if (!isLowHealth) { ChangeState(BotState.AttackEnemy); return; }
             }
-            if (distance <= botConfig.attackRange && !isLowHealth)
+
+            bool isWeaker = nearestEnemy.CurrentHealth <= character.CurrentHealth;
+            if (isWeaker && sqrDist <= detRangeSqr && Random.value < botConfig.aggressiveness)
             {
-                ChangeState(BotState.AttackEnemy);
+                ChangeState(sqrDist <= atkRangeSqr ? BotState.AttackEnemy : BotState.ChaseEnemy);
                 return;
             }
-
-
-
-            bool isEnemyWeaker = nearestEnemy.CurrentHealth <= character.CurrentHealth;
-            bool inDetectionRange = distance <= botConfig.dectecionRange;
-            if (isEnemyWeaker && inDetectionRange && Random.value < botConfig.aggressiveness)
-            {
-                ChangeState(BotState.ChaseEnemy);
-                if (distance <= botConfig.attackRange)
-                {
-                    ChangeState(BotState.AttackEnemy);
-                }
-               
-                return;
-            }
-            
-
         }
-        
+
         FindAndCollectionCoin();
     }
-    void FindAndCollectionHealth()
-    {
-        GameObject nearstHealth = FindNearstHealth();
-        if (nearstHealth != null)
-        {
-            currentTarget = nearstHealth.transform;
-            ChangeState(BotState.Collection);
-        }
-        else
-        {
-            ChangeState(BotState.Idle);
-        }
-    }
-    void FindAndCollectionCoin()
-    {
-        GameObject nearestCoin = FindNearstCoin();
-        if (nearestCoin != null)
-        {
-            currentTarget = nearestCoin.transform;
-            ChangeState(BotState.Collection);
-        }
-        else
-        {
-            ChangeState(BotState.Idle);
-        }
-    }
-    void ChangeState(BotState newState)
-    {
-        if (currentState != newState)
-        {
-            currentState = newState;
-            stateTimer = 0f;
 
-        }
-    }
-    void ExecuteState()
+    // ✅ Tách navigation riêng để throttle
+    void ExecuteStateNav()
     {
         switch (currentState)
         {
             case BotState.Idle:
-                if (stateTimer > .1f)
-                {
-                    MoveToRandomPosition();
-                    stateTimer = 0f;
-                }
-                break;
-            case BotState.Collection:
-                if (currentTarget != null)
-                {
-                    agent.SetDestination(currentTarget.position);
-                }
-                else
-                {
-                    ChangeState(BotState.Idle);
-                }
-                break;
-            case BotState.ChaseEnemy:
-                if (targetEnemy != null && targetEnemy.IsAlive)
-                {
-                    agent.SetDestination(targetEnemy.transform.position);
-                    float distance = Vector3.Distance(transform.position, targetEnemy.transform.position);
-                    if (distance <= botConfig.attackRange)
-                    {
-                        ChangeState(BotState.AttackEnemy);
-                    }
-                }
-                else
-                {
-                    ChangeState(BotState.Idle);
-                }
+                if (stateTimer > 0.1f) { MoveToRandomPosition(); stateTimer = 0f; }
                 break;
 
+            case BotState.Collection:
+                if (currentTarget != null) agent.SetDestination(currentTarget.position);
+                else ChangeState(BotState.Idle);
+                break;
+
+            case BotState.ChaseEnemy:
             case BotState.AttackEnemy:
                 if (targetEnemy != null && targetEnemy.IsAlive)
                 {
                     agent.SetDestination(targetEnemy.transform.position);
-                    TryAttack();
-
+                    if (currentState == BotState.AttackEnemy) TryAttack();
                 }
-                else
-                {
-                    ChangeState(BotState.Idle);
-                }
-
+                else ChangeState(BotState.Idle);
                 break;
-
 
             case BotState.Flee:
                 if (targetEnemy != null && targetEnemy.IsAlive)
                 {
-                    float distance = Vector3.Distance(transform.position, targetEnemy.transform.position);
-                    if (distance <= botConfig.attackRange)
-                    {
-                        TryAttack();
-                    }
-                    Vector3 fleeDirection = (transform.position - targetEnemy.transform.position).normalized;
-                    Vector3 fleePostion = transform.position + fleeDirection * botConfig.patrolRadius;
-                    agent.SetDestination(fleePostion);
+                    Vector3 fleeDir = (transform.position - targetEnemy.transform.position).normalized;
+                    agent.SetDestination(transform.position + fleeDir * botConfig.patrolRadius);
                 }
-
-
-                if (stateTimer > 3f)
-                {
-                    ChangeState(BotState.Idle);
-                }
+                if (stateTimer > 3f) ChangeState(BotState.Idle);
                 break;
         }
     }
+
     void TryAttack()
     {
-        if (Time.time - lastAttack >= botConfig.attackCooldown)
-        {
-            float distance = Vector3.Distance(transform.position, targetEnemy.transform.position);
-            if (distance <= botConfig.attackRange)
-            {
-                targetEnemy.TakeDamageFrom(character, botConfig.attackDmg);
-                VFXManager.Instance.PlayVFXFollow(botConfig.attackVFXPrefab,transform, new Vector3(0,.2f,0));
-                lastAttack = Time.time;
-                //Debug.Log($"{name} tan cong {targetEnemy.name}");
+        if (targetEnemy == null) return;
+        if (Time.time - lastAttack < botConfig.attackCooldown) return;
 
-            }
+        float sqrDist = (transform.position - targetEnemy.transform.position).sqrMagnitude;
+        if (sqrDist <= botConfig.attackRange * botConfig.attackRange)
+        {
+            targetEnemy.TakeDamageFrom(character, botConfig.attackDmg);
+            VFXManager.Instance.PlayVFXFollow(botConfig.attackVFXPrefab, transform, new Vector3(0, .2f, 0));
+            lastAttack = Time.time;
         }
     }
+
+    void ChangeState(BotState s) { if (currentState != s) { currentState = s; stateTimer = 0f; } }
+
+    // ✅ Dùng Registry thay FindObjectsByType
     Character FindNearestEnemy()
     {
+        var characters = CharacterRegistry.Instance?.Characters;
+        if (characters == null) return null;
+
         Character nearest = null;
-        float minDistance = botConfig.dectecionRange;
-        foreach (var character in FindObjectsByType<Character>(FindObjectsSortMode.None))
-        {
-            if (character == this.character || !character.IsAlive)
-            {
-                continue;
-            }
+        float minSqr      = botConfig.dectecionRange * botConfig.dectecionRange;
 
-            float distance = Vector3.Distance(transform.position, character.transform.position);
-            if (distance < minDistance)
-            {
-                minDistance = distance;
-                nearest = character;
-            }
+        for (int i = 0; i < characters.Count; i++)
+        {
+            var c = characters[i];
+            if (c == character || !c.IsAlive) continue;
+
+            float sqr = (transform.position - c.transform.position).sqrMagnitude;
+            if (sqr < minSqr) { minSqr = sqr; nearest = c; }
         }
         return nearest;
     }
 
-    Character FindWeaker()
+    // ✅ Dùng Registry thay FindGameObjectsWithTag("Coin")
+    void FindAndCollectionCoin()
     {
-        Character weaker = null;
-        float minHealth = character.CurrentHealth;
+        var coins = CharacterRegistry.Instance?.Coins;
+        if (coins == null || coins.Count == 0) { ChangeState(BotState.Idle); return; }
 
-        foreach (var enemy in FindObjectsByType<Character>(FindObjectsSortMode.None))
+        Transform nearest = null;
+        float minSqr       = Mathf.Infinity;
+
+        for (int i = 0; i < coins.Count; i++)
         {
-            if (enemy == this.character || !enemy.IsAlive)
-            {
-                continue;
-            }
-            float distance = Vector3.Distance(transform.position, character.transform.position);
-            if (distance <= botConfig.dectecionRange && enemy.CurrentHealth < minHealth)
-            {
-                minHealth = enemy.CurrentHealth;
-                weaker = enemy;
-            }
+            if (coins[i] == null) continue;
+            float sqr = (transform.position - coins[i].position).sqrMagnitude;
+            if (sqr < minSqr) { minSqr = sqr; nearest = coins[i]; }
         }
-        return weaker;
+
+        if (nearest != null) { currentTarget = nearest; ChangeState(BotState.Collection); }
+        else ChangeState(BotState.Idle);
     }
 
-    private GameObject FindNearstCoin()
+    void FindAndCollectionHealth()
     {
-        GameObject nearest = null;
-        float minDistance = Mathf.Infinity;
-        foreach (var coin in GameObject.FindGameObjectsWithTag("Coin"))
-        {
-            if (!coin.activeInHierarchy)
-            {
-                continue;
-            }
+        var healths = CharacterRegistry.Instance?.Healths;
+        if (healths == null || healths.Count == 0) { ChangeState(BotState.Idle); return; }
 
-            float distance = Vector3.Distance(transform.position, coin.transform.position);
-            if (distance < minDistance)
-            {
-                minDistance = distance;
-                nearest = coin;
-            }
-        }
-        return nearest;
-    }
-    private GameObject FindNearstHealth()
-    {
-        GameObject nearest = null;
-        float minDistance = Mathf.Infinity;
-        foreach (var coin in GameObject.FindGameObjectsWithTag("Health"))
-        {
-            if (!coin.activeInHierarchy)
-            {
-                continue;
-            }
+        Transform nearest = null;
+        float minSqr       = Mathf.Infinity;
 
-            float distance = Vector3.Distance(transform.position, coin.transform.position);
-            if (distance < minDistance)
-            {
-                minDistance = distance;
-                nearest = coin;
-            }
+        for (int i = 0; i < healths.Count; i++)
+        {
+            if (healths[i] == null) continue;
+            float sqr = (transform.position - healths[i].position).sqrMagnitude;
+            if (sqr < minSqr) { minSqr = sqr; nearest = healths[i]; }
         }
-        return nearest;
+
+        if (nearest != null) { currentTarget = nearest; ChangeState(BotState.Collection); }
+        else ChangeState(BotState.Idle);
     }
 
     void MoveToRandomPosition()
     {
-        Vector3 randomDirecton = Random.insideUnitSphere * botConfig.patrolRadius;
-        randomDirecton += transform.position;
-        if (NavMesh.SamplePosition(randomDirecton, out NavMeshHit hit, botConfig.patrolRadius,
-            NavMesh.AllAreas))
-        {
+        Vector3 randomDir = Random.insideUnitSphere * botConfig.patrolRadius + transform.position;
+        if (NavMesh.SamplePosition(randomDir, out NavMeshHit hit, botConfig.patrolRadius, NavMesh.AllAreas))
             agent.SetDestination(hit.position);
-        }
     }
 }
