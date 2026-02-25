@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.Events;
 using System.Linq;
@@ -51,6 +51,9 @@ public class GameManager : MonoBehaviour
         Instance = this;
         Debug.Log("GameManager initialized", gameObject);
     }
+    // Cache CoinCollector references trong Start()
+    private CoinCollector _playerCollector;
+    private List<CoinCollector> _botCollectors = new List<CoinCollector>();
     private void Start()
     {
         if(player == null)
@@ -63,6 +66,9 @@ public class GameManager : MonoBehaviour
 
 
         }
+        _playerCollector = player?.GetComponent<CoinCollector>();
+        foreach (var bot in bots)
+            _botCollectors.Add(bot?.GetComponent<CoinCollector>());
 
         ShowMenu();
     }
@@ -142,10 +148,10 @@ public class GameManager : MonoBehaviour
 
         Debug.Log("Game Ended");
 
-        for (int i = 0; i < rankings.Count; i++)
-        {
-            Debug.Log($"{i + 1}. {rankings[i].Name} - {rankings[i].Coins} coins");
-        }
+        //for (int i = 0; i < rankings.Count; i++)
+        //{
+        //    Debug.Log($"{i + 1}. {rankings[i].Name} - {rankings[i].Coins} coins");
+        //}
         
     }
     public void OnExitButton()
@@ -212,37 +218,23 @@ public class GameManager : MonoBehaviour
         var rankings = GetRank();
         OnRankingUpdate?.Invoke(rankings);
     }
+    private readonly List<RankEntry> _rankCache = new List<RankEntry>(8);
     public List<RankEntry> GetRank()
     {
-        List<RankEntry> rankList = new List<RankEntry>();
-        if (player != null)
+        _rankCache.Clear();
+
+        if (_playerCollector != null)
+            _rankCache.Add(new RankEntry { Name = "You", Coins = _playerCollector.CurrentCoins, IsPlayer = true });
+
+        for (int i = 0; i < _botCollectors.Count; i++)
         {
-            var collector = player.GetComponent<CoinCollector>();
-            rankList.Add(new RankEntry()
-            {
-                Name = "You",
-                Coins = collector != null ? collector.CurrentCoins : 0,
-                IsPlayer = true
-            });
+            if (_botCollectors[i] == null) continue;
+            _rankCache.Add(new RankEntry { Name = bots[i].BotName, Coins = _botCollectors[i].CurrentCoins, IsPlayer = false });
         }
 
-        foreach (var bot in bots)
-        {
-            if (bot == null)
-            {
-                continue;
-            }
-            var collector = bot.GetComponent<CoinCollector>();
-            rankList.Add(new RankEntry()
-            {
-                Name = bot.BotName,
-                Coins = collector != null ? collector.CurrentCoins : 0,
-                IsPlayer = false
-            });
-        }
-
-
-        return rankList.OrderByDescending(e=>e.Coins).ToList();
+        // ✅ Sort in-place thay vì LINQ OrderByDescending → ToList
+        _rankCache.Sort((a, b) => b.Coins.CompareTo(a.Coins));
+        return _rankCache;
     }
     public int GetPlayerRank()
     {
