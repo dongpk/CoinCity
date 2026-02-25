@@ -133,18 +133,12 @@ public class VFXManager : MonoBehaviour
     GameObject GetVFXFromPool(VFXType type)
     {
         if (!poolDict.ContainsKey(type)) return CreateVFX(type);
-        
         var pool = poolDict[type];
-        
-        // Xóa các object đã bị destroy
-        pool.RemoveAll(vfx => vfx == null);
-        
-        foreach (var vfx in pool)
+
+        for (int i = 0; i < pool.Count; i++)
         {
-            if (vfx != null && !vfx.activeInHierarchy)
-            {
-                return vfx;
-            }
+            if (pool[i] != null && !pool[i].activeInHierarchy)
+                return pool[i];
         }
         return CreateVFX(type);
     }
