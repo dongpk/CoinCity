@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 2054923896429655328}
   - component: {fileID: 6425602850320872232}
   - component: {fileID: 4166870656524132199}
+  - component: {fileID: -8648834055535827788}
   m_Layer: 0
   m_Name: Coin
   m_TagString: Coin
@@ -64,6 +65,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 87a881a5d46919f4f9ef93a0b74aee47, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CoinRespawnRandom
+  delay: 1
+  maxAttempts: 10
 --- !u!136 &4166870656524132199
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -87,6 +90,19 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 1, z: 0}
+--- !u!114 &-8648834055535827788
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3129492059086442788}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 75ba326f86d2c4349aa87f74bb73d6ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CoinRegistration
+  isHealth: 0
 --- !u!1 &4617484912125518985
 GameObject:
   m_ObjectHideFlags: 0

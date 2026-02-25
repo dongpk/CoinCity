@@ -2828,6 +2828,7 @@ GameObject:
   - component: {fileID: 1704099760839736077}
   - component: {fileID: 7923431489385681682}
   - component: {fileID: 4041706839442338984}
+  - component: {fileID: -7467148871374518661}
   m_Layer: 0
   m_Name: Health
   m_TagString: Health
@@ -2905,3 +2906,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CoinRespawnRandom
   delay: 1
   maxAttempts: 10
+--- !u!114 &-7467148871374518661
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7010434370640953708}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 75ba326f86d2c4349aa87f74bb73d6ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CoinRegistration
+  isHealth: 1
