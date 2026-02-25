@@ -13,7 +13,17 @@ public class CoinRespawnRandom : MonoBehaviour
 
 
     private int currentRoadIndex = -1;
-  
+
+    // Thêm cache trong Start hoặc Awake
+    private Collider _collider;
+    private Renderer[] _renderers;
+
+    private void Awake()
+    {
+        _collider = GetComponent<Collider>();           // ✅ Cache 1 lần
+        _renderers = GetComponentsInChildren<Renderer>(); // ✅ Cache 1 lần
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player")||other.CompareTag("Enemy"))
@@ -26,12 +36,8 @@ public class CoinRespawnRandom : MonoBehaviour
 
     IEnumerator CoinRespawnDelay()
     {
-        // 1. Ẩn coin
-        GetComponent<Collider>().enabled = false;
-        foreach (var renderer in GetComponentsInChildren<Renderer>())
-        {
-            renderer.enabled = false;
-        }
+        _collider.enabled = false;
+        for (int i = 0; i < _renderers.Length; i++) _renderers[i].enabled = false;
 
         // 2. Giải phóng vị trí cũ
         ReleaseCurrentPosition();
@@ -42,12 +48,8 @@ public class CoinRespawnRandom : MonoBehaviour
         // 4. Di chuyển đến vị trí mới
         RespawnRandomOnRoads();
 
-        // 5. Hiện lại coin
-        GetComponent<Collider>().enabled = true;
-        foreach (var renderer in GetComponentsInChildren<Renderer>())
-        {
-            renderer.enabled = true;
-        }
+        _collider.enabled = true;
+        for (int i = 0; i < _renderers.Length; i++) _renderers[i].enabled = true;
     }
 
     private void ReleaseCurrentPosition()
