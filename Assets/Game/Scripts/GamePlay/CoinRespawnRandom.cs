@@ -29,8 +29,7 @@ public class CoinRespawnRandom : MonoBehaviour
         if (other.CompareTag("Player")||other.CompareTag("Enemy"))
         {
             
-            StartCoroutine(CoinRespawnDelay());
-            
+            StartCoroutine(CoinRespawnDelay());            
         }
     }
 
